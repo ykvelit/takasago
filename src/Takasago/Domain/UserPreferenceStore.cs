@@ -23,4 +23,11 @@ public class UserPreferenceStore(AppDbContext db)
         var userPreference = new UserPreference(key, preference);
         return UserPreferences.AddAsync(userPreference, cancellationToken).AsTask();
     }
+
+    public async Task DeleteUserPreferencesAsync(string requestKey, CancellationToken cancellationToken)
+    {
+        await UserPreferences
+            .Where(x => x.Key == requestKey)
+            .ExecuteDeleteAsync(cancellationToken);
+    }
 }

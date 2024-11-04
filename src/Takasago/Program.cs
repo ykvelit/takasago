@@ -42,12 +42,24 @@ app.MapPost("/api/v1/user-preferences", async (AppDbContext db, CreateUserPrefer
 {
     await sender.Send(request, cancellationToken);
     await db.SaveChangesAsync(cancellationToken);
+
+    return Results.Created();
 });
 
 app.MapGet("/api/v1/user-preferences/{key}", async (string key, ISender sender, CancellationToken cancellationToken) =>
 {
     var request = new GetUserPreferences.Request(key);
-    return await sender.Send(request, cancellationToken);
+    var preferences = await sender.Send(request, cancellationToken);
+    
+    return Results.Ok(preferences);
+});
+
+app.MapDelete("/api/v1/user-preferences/{key}", async (string key, ISender sender, CancellationToken cancellationToken) =>
+{
+    var request = new DeleteUserPreferences.Request(key);
+    await sender.Send(request, cancellationToken);
+    
+    return Results.Ok();
 });
 
 await app.RunAsync();
